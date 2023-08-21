@@ -1,9 +1,19 @@
 var express = require("express")
 var router = express.Router()
-const userController = require("../../controllers/userController")
-const breweriesController = require("../../controllers/breweriesController")
+const { sequelize } = require("../database/db")
+const userController = require("../controllers/userController")
+const breweriesController = require("../controllers/breweriesController")
 const { body, validationResult } = require("express-validator")
-const { verifyToken } = require("../../middlewares/userMiddlewares")
+const { verifyToken } = require("../middlewares/userMiddleware")
+
+sequelize.sync().then(
+ () => {
+  console.log("Database connection is successful")
+ },
+ (err) => {
+  console.log(err)
+ }
+)
 
 router.post(
  "/register",

@@ -6,6 +6,10 @@ const jwt = require("jsonwebtoken")
 
 const { userModel } = require("../database/db")
 
+const userService = require("../services/userService")
+
+const modelService = require("../services/modelService")
+
 module.exports = {
  register: async (req, res, next) => {
   const { username, password } = req.body
@@ -17,7 +21,7 @@ module.exports = {
      .status(409)
      .json({ status: "error", data: "User already exists" })
    } else {
-    const hash = await authService.hashPassword(password)
+    const hash = await userService.hashPassword(password)
 
     const uuid = uuidv4()
 
@@ -30,6 +34,7 @@ module.exports = {
 
    res.status(200).json({ status: "success", data: "Register user successful" })
   } catch (error) {
+    console.log("ERROR", error)
    res.status(500).json({ status: "error", data: error })
    next(error)
   }
@@ -42,7 +47,7 @@ module.exports = {
    if (!user) {
     return res.status(401).json({ status: "error", data: "User not found" })
    } else {
-    const validPassword = await authService.checkPassword(
+    const validPassword = await userService.checkPassword(
      password,
      user.password
     )
